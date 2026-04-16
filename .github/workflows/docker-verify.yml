@@ -10,7 +10,7 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     - name: Build Docker image
-      run: docker build -t spamchecks:ci .
+      run: docker build -t spamcheck:ci .
     - name: Run container
       run: |
         docker run -d --name spamcheck_ci \
