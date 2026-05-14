@@ -1,0 +1,23 @@
+artifact_path: /Users/hwangjaemin/PycharmProjects/SpamCheck3/mlruns/1/models/m-703b249f3a91470d9b37fee7a3f280f5/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.11.7
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.7.2
+    skops_trusted_types: null
+mlflow_version: 3.12.0
+model_id: m-703b249f3a91470d9b37fee7a3f280f5
+model_size_bytes: 1639
+model_uuid: m-703b249f3a91470d9b37fee7a3f280f5
+prompts: null
+run_id: 22259d63c468423cba25bfbe232659ed
+utc_time_created: '2026-05-14 04:55:01.831318'

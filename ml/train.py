@@ -45,6 +45,6 @@ with mlflow.start_run():
     mlflow.log_artifact(DATA_PATH) # 데이터 = 실무에서는 데이터는 따로 관리
     mlflow.log_artifact(MODEL_PATH) # 모델 파일
     # MLflow 모델 형식으로도 저장
-    mlflow.sklearn.log_model(pipeline, name="model")
+    mlflow.sklearn.log_model(pipeline, name="model", registered_model_name="spam-model")
     print(f"Model saved to: {MODEL_PATH}")
     print(f"train_accuracy: {acc:.4f}")
