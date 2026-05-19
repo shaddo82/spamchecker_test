@@ -1,7 +1,7 @@
 import os
 MODEL_MODE = "ml" # "rules"
 MLFLOW_TRACKING_URI = "sqlite:///mlflow.db"
-MODEL_URI = "models:/spam-model@champion"
+MODEL_URI = "models:/spam-model@challenger"
 TRAIN_FILE_NAME = "train.csv"
 TEST_FILE_NAME = "test.csv"
 MODEL_NAME = "spam_model.joblib"
