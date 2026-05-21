@@ -13,11 +13,15 @@ jobs:
   train:
     runs-on: ubuntu-latest
     env:
-      MLFLOW_TRACKING_URI: file:./mlruns
+      MLFLOW_TRACKING_URI: file:./ci_mlruns
       REGISTERED_MODEL_NAME: spam-model
     steps:
     - name: 코드 가져오기
       uses: actions/checkout@v4
+    - name: Clean stale MLflow state
+      run: |
+        rm -rf mlruns ci_mlruns mlflow.db
+        mkdir -p ci_mlruns
     - name: 파이썬 설치
       uses: actions/setup-python@v5
       with:

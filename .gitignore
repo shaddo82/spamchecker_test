@@ -6,4 +6,7 @@ venv/
 .DS_Store
 .idea/
 .pytest_cache/
-
+mlruns/
+ci_mlruns/
+mlflow.db
+ml/artifacts/
