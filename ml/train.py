@@ -9,6 +9,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score # 성능 지표 저장을 위해
 import mlflow.sklearn # mlflow 형태로 저장
 
+#
 BASE_DIR = os.path.dirname(__file__)
 DATA_PATH = os.path.join(BASE_DIR, "data", "spam.csv")
 ARTIFACT_DIR = os.path.join(BASE_DIR, "artifacts")
