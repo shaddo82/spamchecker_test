@@ -13,14 +13,14 @@ jobs:
   train:
     runs-on: ubuntu-latest
     env:
-      MLFLOW_TRACKING_URI: ${{ secrets.MLFLOW_TRACKING_URI }}
+      MLFLOW_TRACKING_URI: https://barn-monoxide-marshland.ngrok-free.dev
       REGISTERED_MODEL_NAME: spam-model
     steps:
     - name: 코드 가져오기
       uses: actions/checkout@v4
-    - name: Check MLflow URI
+    - name: Show MLflow URI
       run: |
-        test -n "$MLFLOW_TRACKING_URI"
+        echo "MLFLOW_TRACKING_URI=$MLFLOW_TRACKING_URI"
     - name: 파이썬 설치
       uses: actions/setup-python@v5
       with:
