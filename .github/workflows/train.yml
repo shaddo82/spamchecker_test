@@ -12,6 +12,9 @@ on:
 jobs:
   train:
     runs-on: ubuntu-latest
+    env:
+      MLFLOW_TRACKING_URI: file:./mlruns
+      REGISTERED_MODEL_NAME: spam-model
     steps:
     - name: 코드 가져오기
       uses: actions/checkout@v4
