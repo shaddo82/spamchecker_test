@@ -23,7 +23,7 @@ TEST_DATA_PATH = os.path.join(BASE_DIR, DATA_DIR_NAME, TEST_FILE_NAME)
 ARTIFACT_DIR = os.path.join(BASE_DIR, ARTIFACT_DIR_NAME)
 mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 mlflow.set_registry_uri(MLFLOW_TRACKING_URI)
-mlflow.set_experiment("spam-classification-local")
+mlflow.set_experiment("spam-classification-server")
 train_df = pd.read_csv(TRAIN_DATA_PATH)
 test_df = pd.read_csv(TEST_DATA_PATH)
 X_train = train_df["text"]
