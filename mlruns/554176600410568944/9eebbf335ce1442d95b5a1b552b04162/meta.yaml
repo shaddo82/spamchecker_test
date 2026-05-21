@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/hwangjaemin/PycharmProjects/SpamCheck3/mlruns/554176600410568944/9eebbf335ce1442d95b5a1b552b04162/artifacts
+end_time: 1779342181412
+entry_point_name: ''
+experiment_id: '554176600410568944'
+lifecycle_stage: active
+run_id: 9eebbf335ce1442d95b5a1b552b04162
+run_name: big-pug-712
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1779342179577
+status: 3
+tags: []
+user_id: hwangjaemin

@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/hwangjaemin/PycharmProjects/SpamCheck3/mlruns/554176600410568944/6951eed027214a009a86b96526d03cbb/artifacts
+end_time: 1779342184734
+entry_point_name: ''
+experiment_id: '554176600410568944'
+lifecycle_stage: active
+run_id: 6951eed027214a009a86b96526d03cbb
+run_name: fortunate-bat-215
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1779342182960
+status: 3
+tags: []
+user_id: hwangjaemin

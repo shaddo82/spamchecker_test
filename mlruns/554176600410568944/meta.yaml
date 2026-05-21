@@ -1,0 +1,8 @@
+artifact_location: file:///Users/hwangjaemin/PycharmProjects/SpamCheck3/mlruns/554176600410568944
+creation_time: 1779342179475
+experiment_id: '554176600410568944'
+last_update_time: 1779342179475
+lifecycle_stage: active
+name: spam-classification-local
+trace_location: null
+workspace: default

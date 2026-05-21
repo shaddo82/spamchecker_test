@@ -1,12 +1,12 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
-from app.spam import check_spam_rules
 from app.issue import *
 import logging
 import traceback
 from app.config import MODEL_MODE
 from app.spam import check_spam_rules, check_spam_ml
+from app.model_loader import get_model_info
 
 # 1) 로그 포맷: 시간 + 레벨 + 메시지
 logging.basicConfig(
@@ -30,10 +30,16 @@ async def classify(payload: ClassifyRequest):
         # label, score = check_spam_rules(text)
         if MODEL_MODE == "ml":
             label, score = check_spam_ml(text)
+            model_info = get_model_info()
         else:
             label, score = check_spam_rules(text)
-        logger.info(f"OK /classify | label={label} score={score}")
-        return {"label": label, "score": score}   # <- 이 줄 추가
+            model_info = {
+                "run_id": "rules",
+                "model_type": "rules",
+                "test_accuracy": None,
+            }
+        logger.info(f"OK /classify | label={label} score={score} model_info={model_info}")
+        return {"label": label, "score": score, "model_info": model_info}
     except Exception as e:
         logger.exception(
             f"FAIL /classify | text='{text}' | error={type(e).__name__}: {e}"
@@ -52,7 +58,16 @@ async def classify(payload: ClassifyRequest):
             f"```text\n{tb}\n```"
         )
         create_github_issue(title, body, logger)
-        return {"label": "Internal Server Error", "score": -1}
+        return {
+            "label": f"Model Load Error: {type(e).__name__}",
+            "score": -1,
+            "model_info": {
+                "run_id": "unknown",
+                "model_type": None,
+                "test_accuracy": None,
+            },
+            "error": str(e),
+        }
 
 
 

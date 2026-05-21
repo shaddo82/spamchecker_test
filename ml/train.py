@@ -49,6 +49,8 @@ for model_name, model in models.items():
                          , len(train_df))
         mlflow.log_param("test_row_count"
                          , len(test_df))
+        mlflow.log_param("model_type", model_name)
+        mlflow.log_param("vectorizer", "CountVectorizer")
         pipeline.fit(X_train, y_train)
         # 간단한 metric 저장 (train accuracy)
         train_preds = pipeline.predict(X_train)
@@ -65,7 +67,14 @@ for model_name, model in models.items():
         mlflow.log_artifact(TEST_DATA_PATH)  # 데이터
         mlflow.log_artifact(MODEL_PATH)  # 모델 파일
         # MLflow 모델 형식으로도 저장
-        mlflow.sklearn.log_model(pipeline, name="model", registered_model_name="spam-model")
+        try:
+            mlflow.sklearn.log_model(
+                pipeline,
+                artifact_path="model",
+                registered_model_name=os.getenv("REGISTERED_MODEL_NAME", "spam-model"),
+            )
+        except Exception:
+            mlflow.sklearn.log_model(pipeline, artifact_path="model")
         print(f"Model saved to: {MODEL_PATH}")
         print(f"train_accuracy: {train_acc:.4f}")
         print(f"test_accuracy: {test_acc:.4f}")

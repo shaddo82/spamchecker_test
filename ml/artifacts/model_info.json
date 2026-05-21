@@ -1,0 +1,5 @@
+{
+  "run_id": "6951eed027214a009a86b96526d03cbb",
+  "model_type": "RandomForestClassifier",
+  "test_accuracy": 0.75
+}

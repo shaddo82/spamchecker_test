@@ -1,0 +1,14 @@
+artifact_uri: file:///Users/hwangjaemin/PycharmProjects/SpamCheck3/mlruns/554176600410568944/e40b148e9ccf4879a8728ea6dc1c7cf9/artifacts
+end_time: 1779342182957
+entry_point_name: ''
+experiment_id: '554176600410568944'
+lifecycle_stage: active
+run_id: e40b148e9ccf4879a8728ea6dc1c7cf9
+run_name: luxuriant-moth-9
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1779342181413
+status: 3
+tags: []
+user_id: hwangjaemin

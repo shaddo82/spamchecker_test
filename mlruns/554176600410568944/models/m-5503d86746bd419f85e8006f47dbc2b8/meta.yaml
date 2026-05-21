@@ -1,0 +1,10 @@
+artifact_location: file:///Users/hwangjaemin/PycharmProjects/SpamCheck3/mlruns/554176600410568944/models/m-5503d86746bd419f85e8006f47dbc2b8/artifacts
+creation_timestamp: 1779342179602
+experiment_id: '554176600410568944'
+last_updated_timestamp: 1779342181402
+model_id: m-5503d86746bd419f85e8006f47dbc2b8
+model_type: null
+name: model
+source_run_id: 9eebbf335ce1442d95b5a1b552b04162
+status: 2
+status_message: null

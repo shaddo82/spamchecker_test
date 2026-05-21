@@ -1,0 +1,5 @@
+{
+  "run_id": "9eebbf335ce1442d95b5a1b552b04162",
+  "model_type": "LogisticRegression",
+  "test_accuracy": 0.75
+}

@@ -1,0 +1,5 @@
+{
+  "run_id": "e40b148e9ccf4879a8728ea6dc1c7cf9",
+  "model_type": "NaiveBayes",
+  "test_accuracy": 0.8
+}

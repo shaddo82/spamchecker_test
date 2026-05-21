@@ -1,0 +1,16 @@
+creation_timestamp: 1779342182940
+current_stage: None
+deployment_job_state: null
+description: null
+last_updated_timestamp: 1779342182940
+model_id: m-8bde55464b61404e93c27b8af8641782
+name: spam-model
+run_id: e40b148e9ccf4879a8728ea6dc1c7cf9
+run_link: null
+source: models:/m-8bde55464b61404e93c27b8af8641782
+status: READY
+status_message: null
+storage_location: file:///Users/hwangjaemin/PycharmProjects/SpamCheck3/mlruns/554176600410568944/models/m-8bde55464b61404e93c27b8af8641782/artifacts
+user_id: null
+version: 2
+workspace: default

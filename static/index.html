@@ -9,7 +9,7 @@
     <textarea id="text" rows="5" cols="60"
         placeholder="스팸으로 의심되는 메시지를 붙여주세요!"></textarea><br><br>
     <button onclick="classify()">스팸 탐지</button>
-    <h3 id="result"></h3>
+    <h3 id="result" style="white-space: pre-line;"></h3>
     <script>
         function classify() {
             const text = document.getElementById("text").value;
@@ -29,10 +29,19 @@
                 body: JSON.stringify({text})
             })
             .then(res => res.json())
+
             .then(data => {
-                document.getElementById("result").innerText =
-                    "결과: " + data.label + " (score=" + data.score + ")";
-            })
+                    // 출력 데이터 추가
+                    let msg = "결과: " + data.label + " (score=" + data.score + ")";
+                    const info = data.model_info || {};
+                    const modelType = info.model_type ?? "N/A";
+                    const testAcc = info.test_accuracy ?? "N/A";
+                    const runId = info.run_id ?? "N/A";
+                    msg += "\n모델: " + modelType;
+                    msg += "\nTest Acc: " + testAcc;
+                    msg += "\nRun ID: " + runId;
+                    document.getElementById("result").textContent = msg;
+                })
             .catch(() => {
                 document.getElementById("result").innerText = "에러 발생";
             });
