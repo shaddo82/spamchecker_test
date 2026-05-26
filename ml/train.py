@@ -71,7 +71,7 @@ for model_name, model in models.items():
             mlflow.sklearn.log_model(
                 pipeline,
                 artifact_path="model",
-                registered_model_name=os.getenv("REGISTERED_MODEL_NAME", "spam-model"),
+                registered_model_name=os.getenv("REGISTERED_MODEL_NAME", "spam-model-new"),
             )
         except Exception:
             mlflow.sklearn.log_model(pipeline, artifact_path="model")
