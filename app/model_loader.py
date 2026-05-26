@@ -1,64 +1,69 @@
+import random
+
 import mlflow
 import mlflow.sklearn
-import joblib
 from mlflow.tracking import MlflowClient
 
-from app.config import MODEL_URI, MLFLOW_TRACKING_URI
+from app.config import (
+    CANARY_ENABLED,
+    CANARY_RATIO,
+    CHALLENGER_MODEL_URI,
+    CHAMPION_MODEL_URI,
+    MLFLOW_TRACKING_URI,
+    MODEL_CACHE_ENABLED,
+)
 
-_model = None
-_model_info = None
-
-def _parse_model_alias_uri(uri: str):
-    if not uri.startswith("models:/") or "@" not in uri:
-        return None, None
-    target = uri[len("models:/"):]
-    model_name, alias = target.split("@", 1)
-    return model_name, alias
-
-
-def load_model():
-    global _model
-
-    if _model is None:
-        mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
-        if MODEL_URI.startswith("models:/") or MODEL_URI.startswith("runs:/"):
-            model_name, alias = _parse_model_alias_uri(MODEL_URI)
-            if model_name and alias:
-                try:
-                    MlflowClient().get_model_version_by_alias(model_name, alias)
-                except Exception as e:
-                    raise RuntimeError(
-                        f"MLflow alias lookup failed for {MODEL_URI} "
-                        f"(tracking_uri={MLFLOW_TRACKING_URI}): {e}"
-                    ) from e
-            _model = mlflow.sklearn.load_model(MODEL_URI)
-        else:
-            _model = joblib.load(MODEL_URI)
-
-    return _model
+_champion_model = None
+_challenger_model = None
 
 
-def get_model_info():
-    global _model_info
+def _load_model_from_uri(model_uri: str):
+    mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+    return mlflow.sklearn.load_model(model_uri)
 
-    if _model_info is None:
-        mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 
-        try:
-            info = mlflow.models.get_model_info(MODEL_URI)
-            run = MlflowClient().get_run(info.run_id)
+def load_champion_model():
+    global _champion_model
+    if MODEL_CACHE_ENABLED and _champion_model is not None:
+        return _champion_model
 
-            _model_info = {
-                "run_id": info.run_id,
-                "model_type": run.data.params.get("model_type"),
-                "test_accuracy": run.data.metrics.get("test_accuracy"),
-            }
+    model = _load_model_from_uri(CHAMPION_MODEL_URI)
+    if MODEL_CACHE_ENABLED:
+        _champion_model = model
+    return model
 
-        except Exception:
-            _model_info = {
-                "run_id": "unknown",
-                "model_type": None,
-                "test_accuracy": None,
-            }
 
-    return _model_info
+def load_challenger_model():
+    global _challenger_model
+    if MODEL_CACHE_ENABLED and _challenger_model is not None:
+        return _challenger_model
+
+    model = _load_model_from_uri(CHALLENGER_MODEL_URI)
+    if MODEL_CACHE_ENABLED:
+        _challenger_model = model
+    return model
+
+
+def select_serving_model():
+    if CANARY_ENABLED and random.random() < CANARY_RATIO:
+        return load_challenger_model(), "challenger"
+    return load_champion_model(), "champion"
+
+
+def get_model_info(serving_model: str):
+    mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
+    try:
+        model_uri = CHAMPION_MODEL_URI if serving_model == "champion" else CHALLENGER_MODEL_URI
+        info = mlflow.models.get_model_info(model_uri)
+        run = MlflowClient().get_run(info.run_id)
+        return {
+            "run_id": info.run_id,
+            "model_type": run.data.params.get("model_type"),
+            "test_accuracy": run.data.metrics.get("test_accuracy"),
+        }
+    except Exception:
+        return {
+            "run_id": "unknown",
+            "model_type": None,
+            "test_accuracy": None,
+        }

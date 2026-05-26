@@ -34,9 +34,11 @@
                     // 출력 데이터 추가
                     let msg = "결과: " + data.label + " (score=" + data.score + ")";
                     const info = data.model_info || {};
+                    const servingModel = data.serving_model ?? "N/A";
                     const modelType = info.model_type ?? "N/A";
                     const testAcc = info.test_accuracy ?? "N/A";
                     const runId = info.run_id ?? "N/A";
+                    msg += "\n모델타입: " + servingModel;
                     msg += "\n모델: " + modelType;
                     msg += "\nTest Acc: " + testAcc;
                     msg += "\nRun ID: " + runId;

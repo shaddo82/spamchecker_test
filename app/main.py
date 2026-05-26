@@ -5,7 +5,7 @@ from app.issue import *
 import logging
 import traceback
 from app.config import MODEL_MODE
-from app.spam import check_spam_rules, check_spam_ml
+from app.spam import check_spam_rules, check_spam_ml_canary
 from app.model_loader import get_model_info
 from app.retrain_issue import update_issue_state
 from app.config import LOW_CONFIDENCE_THRESHOLD
@@ -29,11 +29,11 @@ async def classify(payload: ClassifyRequest):
     text = payload.text
     logger.info(f"CALL /classify | text='{text}' | len={len(text)}")
     try:
-        # label, score = check_spam_rules(text)
+        serving_model = "rules"
         if MODEL_MODE == "ml":
-            label, score = check_spam_ml(text)
+            label, score, serving_model = check_spam_ml_canary(text)
             update_issue_state(text, label, score, LOW_CONFIDENCE_THRESHOLD)
-            model_info = get_model_info()
+            model_info = get_model_info(serving_model)
         else:
             label, score = check_spam_rules(text)
             model_info = {
@@ -41,8 +41,16 @@ async def classify(payload: ClassifyRequest):
                 "model_type": "rules",
                 "test_accuracy": None,
             }
-        logger.info(f"OK /classify | label={label} score={score} model_info={model_info}")
-        return {"label": label, "score": score, "model_info": model_info}
+        logger.info(
+            f"OK /classify | label={label} score={score} "
+            f"serving_model={serving_model} model_info={model_info}"
+        )
+        return {
+            "label": label,
+            "score": score,
+            "serving_model": serving_model,
+            "model_info": model_info,
+        }
     except Exception as e:
         logger.exception(
             f"FAIL /classify | text='{text}' | error={type(e).__name__}: {e}"
