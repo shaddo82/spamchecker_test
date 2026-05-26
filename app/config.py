@@ -8,3 +8,6 @@ TEST_FILE_NAME = os.getenv("TEST_FILE_NAME", "test.csv")
 MODEL_NAME = os.getenv("MODEL_NAME", "spam_model.joblib")
 ARTIFACT_DIR_NAME = os.getenv("ARTIFACT_DIR_NAME", "artifacts")
 DATA_DIR_NAME = os.getenv("DATA_DIR_NAME", "data")
+# drift / retrain issue report
+LOW_CONFIDENCE_THRESHOLD = 0.65
+LOW_CONFIDENCE_LIMIT = 5

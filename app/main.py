@@ -7,6 +7,8 @@ import traceback
 from app.config import MODEL_MODE
 from app.spam import check_spam_rules, check_spam_ml
 from app.model_loader import get_model_info
+from app.retrain_issue import update_issue_state
+from app.config import LOW_CONFIDENCE_THRESHOLD
 
 # 1) 로그 포맷: 시간 + 레벨 + 메시지
 logging.basicConfig(
@@ -30,6 +32,7 @@ async def classify(payload: ClassifyRequest):
         # label, score = check_spam_rules(text)
         if MODEL_MODE == "ml":
             label, score = check_spam_ml(text)
+            update_issue_state(text, label, score, LOW_CONFIDENCE_THRESHOLD)
             model_info = get_model_info()
         else:
             label, score = check_spam_rules(text)
