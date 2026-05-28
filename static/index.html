@@ -7,10 +7,16 @@
 <body>
     <h1>스팸 판별기</h1>
     <textarea id="text" rows="5" cols="60"
-        placeholder="스팸으로 의심되는 메시지를 붙여주세요!"></textarea><br><br>
+        placeholder="스팸으로 의심되는 메세지를 붙여넣어주세요!"></textarea><br><br>
     <button onclick="classify()">스팸 탐지</button>
     <h3 id="result" style="white-space: pre-line;"></h3>
+    <br><br>
+    <button onclick="sendFeedback('ham')">정답: ham</button>
+    <button onclick="sendFeedback('spam')">정답: spam</button>
+    <h3 id="feedbackResult"></h3>
     <script>
+        let lastResult = null;
+
         function classify() {
             const text = document.getElementById("text").value;
 
@@ -43,9 +49,44 @@
                     msg += "\nTest Acc: " + testAcc;
                     msg += "\nRun ID: " + runId;
                     document.getElementById("result").textContent = msg;
+                    lastResult = {
+                        text: text,
+                        prediction: data.label,
+                        score: data.score,
+                        serving_model: data.serving_model
+                    };
                 })
             .catch(() => {
                 document.getElementById("result").innerText = "에러 발생";
+            });
+        }
+
+        function sendFeedback(correctLabel) {
+            if (!lastResult) {
+                document.getElementById("feedbackResult").innerText =
+                    "먼저 스팸 탐지를 실행하세요.";
+                return;
+            }
+
+            fetch("/feedback", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    text: lastResult.text,
+                    prediction: lastResult.prediction,
+                    correct_label: correctLabel,
+                    score: lastResult.score,
+                    serving_model: lastResult.serving_model
+                })
+            })
+            .then(res => res.json())
+            .then(() => {
+                document.getElementById("feedbackResult").innerText =
+                    "피드백 저장 완료: " + correctLabel;
+            })
+            .catch(() => {
+                document.getElementById("feedbackResult").innerText =
+                    "피드백 저장 중 에러 발생";
             });
         }
     </script>

@@ -1,0 +1,2 @@
+time,text,prediction,correct_label,score,serving_model
+2026-05-28T13:41:55,Hello!,Model Load Error: MlflowException,ham,-1.0,unknown

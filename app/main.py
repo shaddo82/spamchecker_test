@@ -9,6 +9,8 @@ from app.spam import check_spam_rules, check_spam_ml_canary
 from app.model_loader import get_model_info
 from app.retrain_issue import update_issue_state
 from app.config import LOW_CONFIDENCE_THRESHOLD
+from app.feedback import save_feedback
+from app.prediction_logger import save_prediction_log
 
 # 1) 로그 포맷: 시간 + 레벨 + 메시지
 logging.basicConfig(
@@ -24,6 +26,27 @@ app = FastAPI()
 class ClassifyRequest(BaseModel):
     text: str
 
+
+class FeedbackRequest(BaseModel):
+    text: str
+    prediction: str
+    correct_label: str
+    score: float = 0.0
+    serving_model: str = "unknown"
+
+
+@app.post("/feedback")
+async def feedback(payload: FeedbackRequest):
+    save_feedback(
+        payload.text,
+        payload.prediction,
+        payload.correct_label,
+        payload.score,
+        payload.serving_model,
+    )
+    return {"status": "ok"}
+
+
 @app.post("/classify")
 async def classify(payload: ClassifyRequest):
     text = payload.text
@@ -33,6 +56,7 @@ async def classify(payload: ClassifyRequest):
         if MODEL_MODE == "ml":
             label, score, serving_model = check_spam_ml_canary(text)
             update_issue_state(text, label, score, LOW_CONFIDENCE_THRESHOLD)
+            save_prediction_log(text, label, score, serving_model)
             model_info = get_model_info(serving_model)
         else:
             label, score = check_spam_rules(text)
