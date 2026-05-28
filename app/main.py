@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.staticfiles import StaticFiles
+from dotenv import load_dotenv
 from app.issue import *
 import logging
 import traceback
@@ -11,6 +12,9 @@ from app.retrain_issue import update_issue_state
 from app.config import LOW_CONFIDENCE_THRESHOLD
 from app.feedback import save_feedback
 from app.prediction_logger import save_prediction_log
+from app.google_sheet_logger import append_prediction_log, append_feedback_log
+
+load_dotenv()
 
 # 1) 로그 포맷: 시간 + 레벨 + 메시지
 logging.basicConfig(
@@ -37,14 +41,32 @@ class FeedbackRequest(BaseModel):
 
 @app.post("/feedback")
 async def feedback(payload: FeedbackRequest):
-    save_feedback(
-        payload.text,
-        payload.prediction,
-        payload.correct_label,
-        payload.score,
-        payload.serving_model,
-    )
-    return {"status": "ok"}
+    # save_feedback(
+    #     payload.text,
+    #     payload.prediction,
+    #     payload.correct_label,
+    #     payload.score,
+    #     payload.serving_model,
+    # )
+    try:
+        append_feedback_log(
+            payload.text,
+            payload.prediction,
+            payload.correct_label,
+            payload.score,
+            payload.serving_model,
+        )
+        logger.info(
+            f"OK /feedback | prediction={payload.prediction} "
+            f"correct_label={payload.correct_label}"
+        )
+        return {"status": "feedback saved"}
+    except Exception as e:
+        logger.exception(f"FAIL /feedback | error={type(e).__name__}: {e}")
+        return {
+            "status": "feedback save failed",
+            "error": f"{type(e).__name__}: {e}",
+        }
 
 
 @app.post("/classify")
@@ -56,7 +78,15 @@ async def classify(payload: ClassifyRequest):
         if MODEL_MODE == "ml":
             label, score, serving_model = check_spam_ml_canary(text)
             update_issue_state(text, label, score, LOW_CONFIDENCE_THRESHOLD)
-            save_prediction_log(text, label, score, serving_model)
+            try:
+                append_prediction_log(text, label, score, serving_model)
+            except Exception as log_error:
+                logger.warning(
+                    "Prediction log skipped: %s: %s",
+                    type(log_error).__name__,
+                    log_error,
+                )
+            # save_prediction_log(text, label, score, serving_model)
             model_info = get_model_info(serving_model)
         else:
             label, score = check_spam_rules(text)
